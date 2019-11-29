@@ -58,12 +58,47 @@ static void delCity(void *s)
 
 int main(int argc, char* args[])
 {
-    if (argc == 1)
+    char origin[15];
+    char destination[15];
+    char fileName[30];
+    if (argc <= 2)
     {
-        printf("Must include filename to create the list");
-        return 0;
+        char choice;
+        if (argc == 1)
+        {
+            printf("Enter the origin:\n");
+            scanf("%s", origin);
+        }
+        else
+        {
+            sscanf(args[1], "%s", origin);
+        }
+        printf("Enter the destination:\n");
+        scanf("%s", destination);
+        printf("Enter file name (Y) or load default file (N): (Y/N)\n");
+        scanf(" %c", &choice);
+        if (choice == 'Y' || choice == 'y')
+        {
+            printf("Enter new filename:\n");
+            scanf("%s", fileName);
+        }
+        else if (choice == 'N' || choice == 'n')
+            strcpy(fileName, "FRANCE.MAP");
+        else
+        {
+            printf("Unknown choice. Exiting..\n");
+            return 0;
+        }
     }
-    char* fileName = args[1];
+    else
+    {
+        sscanf(args[1], "%s", origin);
+        sscanf(args[2], "%s", destination);
+        if (argc == 4)
+            sscanf(args[3], "%s", fileName);
+        else
+            strcpy(fileName, "FRANCE.MAP");
+    }
     FILE *franceMap = fopen(fileName, "r");
     if (franceMap == 0)
     {
@@ -73,7 +108,7 @@ int main(int argc, char* args[])
     List* map = generateMap(franceMap, compN, display);
     pclose(franceMap);
 
-    List* path = aStar(map, "Rennes", "Lyon", minF);
+    List* path = aStar(map, origin, destination, minF);
     printf("The shorted path is: \n\n");
     displayList(path);
 
